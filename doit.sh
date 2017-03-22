@@ -28,11 +28,13 @@ fi
 # And your commit message 
 # Then trigger by changing DO-IT
 
+git status
+
 
 git config user.name 'Mike Wolf'
 git config user.email 'mw@mike-wolf.com'
-git commit -am "A fourth one"
-git status
+git commit -am "changes in README file"
+
 ###########################################3
 
 
