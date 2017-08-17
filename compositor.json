@@ -1,0 +1,90 @@
+{
+  "name": "eldrgeek/git-glitch",
+  "version": "0.1.4",
+  "libraries": {
+    "xv": "^1.1.25"
+  },
+  "title": "Git glitch",
+  "branch": "",
+  "style": {
+    "name": "Material",
+    "componentSet": {
+      "nav": "nav/DarkAbsoluteNav",
+      "header": "header/GradientHeader",
+      "article": "article/BasicArticle",
+      "footer": "footer/BasicFooter"
+    },
+    "fontFamily": "Roboto, sans-serif",
+    "heading": {
+      "fontWeight": 500,
+      "letterSpacing": "-0.01em"
+    },
+    "colors": {
+      "text": "#212121",
+      "background": "#fff",
+      "primary": "#2196f3",
+      "secondary": "#1565c0",
+      "highlight": "#ff4081",
+      "border": "#e0e0e0",
+      "muted": "#f5f5f5"
+    },
+    "layout": {
+      "centered": true,
+      "bannerHeight": "80vh",
+      "maxWidth": 896
+    }
+  },
+  "content": [
+    {
+      "component": "nav",
+      "links": [
+        {
+          "href": "https://github.com/eldrgeek/git-glitch",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://npmjs.com/package/my-gomix-app",
+          "text": "npm"
+        }
+      ]
+    },
+    {
+      "component": "header",
+      "heading": "git-glitch",
+      "subhead": "Git support in glitch.com",
+      "children": [
+        {
+          "component": "ui/TweetButton",
+          "text": "git-glitch: Git support in glitch.com",
+          "url": null
+        },
+        {
+          "component": "ui/GithubButton",
+          "user": "eldrgeek",
+          "repo": "git-glitch"
+        }
+      ],
+      "text": "v0.0.1"
+    },
+    {
+      "component": "article",
+      "metadata": {
+        "source": "github.readme"
+      },
+      "html": "<h1>Git in glitch</h1>\n<p>This is a proof of concept for using <code>git</code> in <code>glitch</code> </p>\n<p>The project is hosted in <code>Github</code> at <a href=\"https://github.com/EmbeddedMike/git-glitch\">EmbeddedMike/git-glitch</a></p>\n<p>I plan to make improvements to suit my workflow and would welcome others \nimproving it. If you would like an invite to the <code>glitch</code> project, you can message me through <code>git</code>. Or you can fork my project on github, remix this to your own, make changes and send me a PR</p>\n<h1>How it works</h1>\n<h2>Overview</h2>\n<p>Two files control the automated behavior of the project</p>\n<ol>\n<li><code>package.json</code></li>\n<li><code>watch.json</code></li>\n</ol>\n<p>Two files control git operations</p>\n<ol>\n<li><code>doit.sh</code></li>\n<li><code>DO-IT</code></li>\n</ol>\n<p>This file forces the project to restart</p>\n<ol>\n<li><code>.trigger-rebuild</code></li>\n</ol>\n<p>Your project will also restart (after trying to install) if you modify <code>package.json</code> or <code>.env</code></p>\n<h2><code>package.json</code></h2>\n<p>The relevant parts of the file are below:</p>\n<pre>    <span class=\"hljs-string\">&quot;watch&quot;</span>: {\n        <span class=\"hljs-string\">&quot;doit&quot;</span>: <span class=\"hljs-string\">&quot;DO-IT&quot;</span>\n    },\n    <span class=\"hljs-string\">&quot;scripts&quot;</span>: {\n        <span class=\"hljs-string\">&quot;start&quot;</span>: <span class=\"hljs-string\">&quot;npm-watch &amp; node server.js&quot;</span>,\n        <span class=\"hljs-string\">&quot;doit&quot;</span>: <span class=\"hljs-string\">&quot;./doit.sh&quot;</span>\n    },\n  <span class=\"hljs-string\">&quot;dependencies&quot;</span>: {\n    ...\n        <span class=\"hljs-string\">&quot;npm-watch&quot;</span>: <span class=\"hljs-string\">&quot;^0.1.7&quot;</span>\n    },</pre><p>The package <code>npm-watch</code> is launched by the <code>start</code> script</p>\n<p>The <code>watch</code> section configures <code>npm-watch</code>. When <code>DO-IT</code> changes, \nthe script <code>doit</code> runs. This invokes <code>doit.sh</code></p>\n<h2><code>watch.json</code></h2>\n<p>This tells <code>gomix</code> how to respond to some other changes</p>\n<pre>{\n  <span class=\"hljs-attr\">&quot;install&quot;</span>: {\n    <span class=\"hljs-attr\">&quot;include&quot;</span>: [\n      <span class=\"hljs-string\">&quot;^package\\\\.json$&quot;</span>,\n      <span class=\"hljs-string\">&quot;^\\\\.env$&quot;</span>\n    ]\n  },\n  <span class=\"hljs-attr\">&quot;restart&quot;</span>: {\n    <span class=\"hljs-attr\">&quot;include&quot;</span>: [\n      <span class=\"hljs-string\">&quot;^.trigger-rebuild$&quot;</span>\n    ]\n  },\n  <span class=\"hljs-attr\">&quot;throttle&quot;</span>: <span class=\"hljs-number\">1000</span>\n}</pre><p>The <code>throttle</code> value debounces changes. So actions controlled by this file\nwill take effect, in this csae, after 1000 msecs. </p>\n<p>If you are making pervasive changes to files that trigger actions you can change change the <code>throttle</code> value to some big number like <code>10000</code> Then when you are ready for more response, change it to a lower number.</p>\n<p>Note that the <code>npm-watch</code> behavior is independent and occurs as soon as there\nis any change.</p>\n<p>The <code>install</code> member tells <code>gomix</code> to rerun the install process when <code>package.json</code> or <code>.env</code> changes (modulated by <code>throttle</code>)</p>\n<p>The <code>restart</code> member tells <code>gomix</code> to run the <code>start</code> script in <code>scripts</code> in <code>.tirggle-rebuild</code> (moduldated by <code>throttle</code>) </p>\n<h2>Running a command</h2>\n<p>The file <code>doit.sh</code> contains a bash script.</p>\n<p>The file <code>DO-IT</code> controls execution of <code>doit.sh.</code> A single character change in <code>DO-IT</code>will cause execution of the current commands in <code>doit.sh.</code></p>\n<p>So the normal workflow is:</p>\n<p>Uncomment the lines in <code>doit.sh.</code> that you want to execute, or add or modify the lines to meet your needs. For example, you might uncomment and modify the line:</p>\n<p>#<code>git checkout &quot;README.md&quot;</code></p>\n<p>to checkout a different file. See the not on problems after checkouts.</p>\n<p>You can put any commands that you want, not just git commands, into <code>doit.sh</code> </p>\n<h1>Problems and improvements</h1>\n<h2>Updating editors</h2>\n<p>When you modify your working directory by a <code>git</code> operation (for example by a checkout or a fetch) the glitch editor does NOT update. To force an update you need to reload the current project in your browser. Annoying, but it works.</p>\n<h2><code>doit.sh</code> reruns last command on reload</h2>\n<p>When the project reloads, the <code>glitch</code> invokes the <code>start</code> script, which \nin turn invokes <code>node-watch</code> which will run the <code>doit</code> script. So whatever is left in this file will be rerun.</p>\n<p>For this reason it&apos;s a good idea to re-comment any lines after you do a commit.</p>\n<p>#</p>\n"
+    },
+    {
+      "component": "footer",
+      "links": [
+        {
+          "href": "https://github.com/eldrgeek/git-glitch",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://github.com/eldrgeek",
+          "text": "eldrgeek"
+        }
+      ]
+    }
+  ]
+}
